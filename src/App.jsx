@@ -26,6 +26,10 @@ function App() {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchText);
     }, 300);
+   // Update the browser tab title when the number of results changes
+  useEffect(() => {
+    document.title = `CvSU Mini Store (${filteredProducts.length} results)`;
+  }, [filteredProducts.length]);
 
     return () => clearTimeout(timer); // cleanup
   }, [searchText]);
@@ -47,6 +51,7 @@ function App() {
     .filter((p) =>
       p.title.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
     )
+    
     .filter((p) => category === "All" || p.category === category)
     .sort((a, b) => {
       if (sortOrder === "low-high") return a.price - b.price;
@@ -74,26 +79,28 @@ function App() {
         onClear={handleClear}
       />
 
-      <p className="result-count">
-        Showing {filteredProducts.length} of {products.length} products
-      </p>
-
-      <div className="product-grid">
-        {filteredProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            title={product.title}
-            price={product.price}
-            category={product.category}
-            inStock={product.inStock}
-            onAddToCart={handleAddToCart}
-          >
-            {badges[product.id] && (
-              <span className="badge">{badges[product.id]}</span>
-            )}
-          </ProductCard>
-        ))}
-      </div>
+      {filteredProducts.length === 0 ? (
+        <p className="empty-state">
+          No products found. Try a different keyword or category.
+        </p>
+      ) : (
+        <div className="product-grid">
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              title={product.title}
+              price={product.price}
+              category={product.category}
+              inStock={product.inStock}
+              onAddToCart={handleAddToCart}
+            >
+              {badges[product.id] && (
+                <span className="badge">{badges[product.id]}</span>
+              )}
+            </ProductCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
