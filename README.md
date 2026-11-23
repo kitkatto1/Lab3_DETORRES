@@ -34,3 +34,4 @@ If you are developing a production application, we recommend using TypeScript wi
 
 5. **What does the `children` prop allow you to do that a normal prop does not?**
    The `children` prop allows a parent component to pass arbitrary JSX elements, HTML tags, or other components directly between the opening and closing tags of a child component, enabling flexible wrapper and layout composition.
+# Lab3_DETORRES
