@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import products from "./data/products";
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
@@ -21,6 +21,15 @@ function App() {
   const [category, setCategory] = useState("All");
   const [sortOrder, setSortOrder] = useState("default");
 
+    // Debounce: update debouncedSearch 300ms after the user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 300);
+
+    return () => clearTimeout(timer); // cleanup
+  }, [searchText]);
+
   const handleAddToCart = (title) => {
     setCartCount((prev) => prev + 1);
     setLastAdded(title);
@@ -36,7 +45,7 @@ function App() {
   // ---- Derived list: calculated during render, not stored in state ----
   const filteredProducts = [...products] // copy, so the original is never mutated
     .filter((p) =>
-      p.title.toLowerCase().includes(searchText.trim().toLowerCase())
+      p.title.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
     )
     .filter((p) => category === "All" || p.category === category)
     .sort((a, b) => {
