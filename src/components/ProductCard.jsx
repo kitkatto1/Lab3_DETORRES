@@ -1,27 +1,30 @@
-import "./ProductCard.css";
-
-function ProductCard({ title, price, category = "General", inStock, onAddToCart, children }) {
-  // Format number with commas and 2 decimal places (e.g., ₱1,299.00)
-  const formattedPrice = `₱${price.toLocaleString("en-PH", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+function ProductCard({
+  title,
+  price,
+  category = "General",
+  inStock,
+  onAddToCart,
+  children,
+}) {
+  const formattedPrice = price.toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
 
   return (
-    <div className={`product-card ${!inStock ? "out-of-stock" : ""}`}>
-      {/* Render optional children badge if provided */}
-      {children && <div className="badge-container">{children}</div>}
+    <div className={`product-card ${inStock ? "" : "out-of-stock"}`}>
+      {children && <div className="card-badge-slot">{children}</div>}
 
-      <span className="product-category">{category}</span>
-      <h3 className="product-title">{title}</h3>
-      <p className="product-price">{formattedPrice}</p>
+      <span className="card-category">{category}</span>
+      <h3 className="card-title">{title}</h3>
+      <p className="card-price">{formattedPrice}</p>
 
-      <div className="product-footer">
-        <span className={`stock-label ${inStock ? "in-stock-text" : "out-of-stock-text"}`}>
+      <div className="card-footer">
+        <span className={`stock-label ${inStock ? "in" : "out"}`}>
           {inStock ? "In Stock" : "Out of Stock"}
         </span>
-
         <button
+          type="button"
           className="add-btn"
           disabled={!inStock}
           onClick={() => onAddToCart(title)}

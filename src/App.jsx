@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import products from "./data/products";
+import { products } from "./data/products";
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
 import "./App.css";
 
-// Badges passed as children (keyed by product id)
 const badges = {
   1: "New",
   4: "Sale",
@@ -21,19 +20,16 @@ function App() {
   const [category, setCategory] = useState("All");
   const [sortOrder, setSortOrder] = useState("default");
 
-    // Debounce: update debouncedSearch 300ms after the user stops typing
+  // ---- Debounce effect ----
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchText);
     }, 300);
-   // Update the browser tab title when the number of results changes
-  useEffect(() => {
-    document.title = `CvSU Mini Store (${filteredProducts.length} results)`;
-  }, [filteredProducts.length]);
 
-    return () => clearTimeout(timer); // cleanup
+    return () => clearTimeout(timer);
   }, [searchText]);
 
+  // ---- Handlers ----
   const handleAddToCart = (title) => {
     setCartCount((prev) => prev + 1);
     setLastAdded(title);
@@ -46,18 +42,22 @@ function App() {
     setSortOrder("default");
   };
 
-  // ---- Derived list: calculated during render, not stored in state ----
-  const filteredProducts = [...products] // copy, so the original is never mutated
+  // ---- Derived list ----
+  const filteredProducts = [...products]
     .filter((p) =>
       p.title.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
     )
-    
     .filter((p) => category === "All" || p.category === category)
     .sort((a, b) => {
       if (sortOrder === "low-high") return a.price - b.price;
       if (sortOrder === "high-low") return b.price - a.price;
       return 0;
     });
+
+  // ---- Tab title effect ----
+  useEffect(() => {
+    document.title = `CvSU Mini Store (${filteredProducts.length} results)`;
+  }, [filteredProducts.length]);
 
   return (
     <div className="app">
@@ -78,6 +78,10 @@ function App() {
         onSortChange={setSortOrder}
         onClear={handleClear}
       />
+
+      <p className="result-count">
+        Showing {filteredProducts.length} of {products.length} products
+      </p>
 
       {filteredProducts.length === 0 ? (
         <p className="empty-state">
